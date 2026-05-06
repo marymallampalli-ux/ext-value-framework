@@ -1,1188 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C&T Value Creation Framework</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --black: #0a0a0a;
-    --white: #fafaf8;
-    --cream: #f4f2ed;
-    --mid: #e8e5de;
-    --muted: #9a9690;
-    --ink: #2a2825;
-    --accent-green: #1a5c3a;
-    --accent-green-light: #e8f2ec;
-    --accent-green-mid: #2d8a58;
-    --accent-purple: #3d2e6b;
-    --accent-purple-light: #eeebf7;
-    --accent-blue: #1b4472;
-    --accent-blue-light: #e6edf6;
-    --accent-amber: #7a4a0d;
-    --accent-amber-light: #f7f0e4;
-    --bucket-1: #1a5c3a;
-    --bucket-2: #3d2e6b;
-    --bucket-3: #1b4472;
-    --bucket-4: #7a4a0d;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--white);
-    color: var(--ink);
-    font-size: 15px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(250,250,248,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--mid);
-    padding: 0 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-  }
-  .nav-logo {
-    font-family: 'Instrument Serif', serif;
-    font-size: 17px;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  .nav-logo span { color: var(--muted); font-style: italic; }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-  .nav-links a {
-    font-size: 13px;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color .2s;
-    font-weight: 400;
-  }
-  .nav-links a:hover { color: var(--ink); }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 5rem 2.5rem 4rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-  .hero-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    display: inline-block;
-    width: 20px;
-    height: 1px;
-    background: var(--muted);
-  }
-  .hero h1 {
-    font-family: 'Instrument Serif', serif;
-    font-size: clamp(2.4rem, 4vw, 3.2rem);
-    font-weight: 400;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--black);
-    margin-bottom: 1.5rem;
-  }
-  .hero h1 em {
-    font-style: italic;
-    color: var(--muted);
-  }
-  .hero-intro {
-    font-size: 15px;
-    color: #5a5752;
-    line-height: 1.75;
-    max-width: 480px;
-  }
-  .hero-right { padding-top: .5rem; }
-  .hero-right p {
-    font-size: 14px;
-    color: #5a5752;
-    line-height: 1.75;
-    margin-bottom: 1.25rem;
-  }
-
-  /* lifecycle strip */
-  .lifecycle {
-    margin: 0 2.5rem 3.5rem;
-    max-width: 1060px;
-    margin-left: auto;
-    margin-right: auto;
-    background: var(--black);
-    border-radius: 12px;
-    padding: 2rem 2.5rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .lifecycle::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 2.5rem;
-    right: 2.5rem;
-    height: 1px;
-    background: rgba(255,255,255,.1);
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-  .lc-stage {
-    padding: 0 1.5rem 0 0;
-    border-right: 1px solid rgba(255,255,255,.1);
-    margin-right: 1.5rem;
-  }
-  .lc-stage:last-child { border-right: none; margin-right: 0; padding-right: 0; }
-  .lc-num {
-    font-family: 'Instrument Serif', serif;
-    font-size: 2rem;
-    color: rgba(255,255,255,.18);
-    line-height: 1;
-    margin-bottom: .5rem;
-  }
-  .lc-title {
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(255,255,255,.9);
-    margin-bottom: .4rem;
-    letter-spacing: .02em;
-  }
-  .lc-desc {
-    font-size: 12px;
-    color: rgba(255,255,255,.45);
-    line-height: 1.55;
-  }
-
-  /* ── FRAMEWORK SECTION ── */
-  .framework-section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2.5rem 5rem;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--mid);
-  }
-  .section-title {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: var(--black);
-    letter-spacing: -0.01em;
-  }
-  .metric-count {
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* filter bar */
-  .filter-bar {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-  }
-  .filter-btn {
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    padding: 5px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--mid);
-    background: var(--white);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all .15s;
-    font-weight: 400;
-  }
-  .filter-btn:hover { border-color: #bbb; color: var(--ink); }
-  .filter-btn.active {
-    background: var(--ink);
-    color: var(--white);
-    border-color: var(--ink);
-  }
-
-  /* legend */
-  .legend {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-    font-size: 12px;
-    color: var(--muted);
-    align-items: center;
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .ld { width: 8px; height: 8px; border-radius: 50%; }
-
-  /* buckets grid */
-  .buckets-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .bucket-card {
-    border: 1px solid var(--mid);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--white);
-  }
-  .bucket-head {
-    padding: 1.25rem 1.5rem 1rem;
-    border-bottom: 1px solid var(--mid);
-  }
-  .bucket-head-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: .5rem;
-  }
-  .bucket-num {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.1rem;
-    font-style: italic;
-    color: var(--muted);
-    flex-shrink: 0;
-  }
-  .bucket-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .bucket-question {
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-    margin-bottom: .6rem;
-  }
-  .bucket-kpis { display: flex; gap: 4px; flex-wrap: wrap; }
-  .kpi-tag {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 8px;
-    font-weight: 500;
-  }
-
-  .b1 .bucket-head { border-top: 3px solid var(--bucket-1); }
-  .b2 .bucket-head { border-top: 3px solid var(--bucket-2); }
-  .b3 .bucket-head { border-top: 3px solid var(--bucket-3); }
-  .b4 .bucket-head { border-top: 3px solid var(--bucket-4); }
-
-  .kpi-b1 { background: var(--accent-green-light); color: var(--accent-green); }
-  .kpi-b2 { background: var(--accent-purple-light); color: var(--accent-purple); }
-  .kpi-b3 { background: var(--accent-blue-light); color: var(--accent-blue); }
-  .kpi-b4 { background: var(--accent-amber-light); color: var(--accent-amber); }
-
-  .metric-rows { padding: .5rem 0; }
-
-  .metric-row {
-    padding: .65rem 1.5rem;
-    cursor: pointer;
-    transition: background .12s;
-    border-bottom: 1px solid transparent;
-  }
-  .metric-row:last-child { border-bottom: none; }
-  .metric-row:hover { background: var(--cream); }
-  .metric-row.open { background: var(--cream); border-bottom: 1px solid var(--mid); }
-  .metric-row.dimmed { opacity: .25; pointer-events: none; }
-  .metric-row.highlighted { background: var(--cream); }
-
-  .metric-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .metric-name {
-    font-size: 13px;
-    color: var(--ink);
-    flex: 1;
-    line-height: 1.4;
-  }
-  .metric-tag-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
-  .tag {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 8px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .tag-growth { background: #e8f2ec; color: #1a5c3a; }
-  .tag-cost { background: #eeebf7; color: #3d2e6b; }
-  .tag-both { background: #f7f0e4; color: #7a4a0d; }
-  .tag-p1 { background: #e6edf6; color: #1b4472; font-size: 9px; padding: 1px 5px; }
-  .tag-p2 { background: #e8f2ec; color: #1a5c3a; font-size: 9px; padding: 1px 5px; }
-  .tag-p3 { background: #f1efe8; color: #6b6760; font-size: 9px; padding: 1px 5px; }
-  .expand-arrow {
-    font-size: 10px;
-    color: var(--muted);
-    transition: transform .2s;
-    flex-shrink: 0;
-  }
-  .metric-row.open .expand-arrow { transform: rotate(180deg); }
-
-  /* detail panel */
-  .metric-detail {
-    display: none;
-    padding: .75rem 1.5rem 1rem;
-    background: var(--cream);
-    border-top: 1px solid var(--mid);
-    animation: slideDown .15s ease;
-  }
-  .metric-row.open + .metric-detail { display: block; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-
-  .detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-  }
-  .detail-block { }
-  .detail-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: .35rem;
-  }
-  .detail-text {
-    font-size: 12px;
-    color: #4a4845;
-    line-height: 1.6;
-  }
-  .priority-bar {
-    display: flex;
-    gap: 4px;
-    margin-top: .25rem;
-  }
-  .pbar-dot {
-    width: 20px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--mid);
-  }
-  .pbar-dot.filled { background: var(--accent-blue); }
-
-  /* ── INDUSTRY OVERLAY ── */
-  .industry-overlay {
-    margin-top: 3.5rem;
-    border: 1px solid var(--mid);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .overlay-toggle {
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    background: var(--cream);
-    border-bottom: 1px solid transparent;
-    transition: background .15s;
-    user-select: none;
-  }
-  .overlay-toggle:hover { background: var(--mid); }
-  .overlay-toggle.open { border-bottom-color: var(--mid); }
-  .overlay-toggle-title {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.15rem;
-    font-weight: 400;
-    color: var(--ink);
-  }
-  .overlay-toggle-sub {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .overlay-toggle-arrow { font-size: 12px; color: var(--muted); transition: transform .2s; }
-  .overlay-toggle.open .overlay-toggle-arrow { transform: rotate(180deg); }
-
-  .overlay-body {
-    display: none;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-  }
-  .overlay-body.open { display: grid; }
-  .ind-card {
-    padding: 1.25rem 1.5rem;
-    border-right: 1px solid var(--mid);
-    border-bottom: 1px solid var(--mid);
-  }
-  .ind-card:nth-child(3n) { border-right: none; }
-  .ind-card:nth-last-child(-n+3) { border-bottom: none; }
-  .ind-card-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: .4rem;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .ind-pip { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .ind-focus { font-size: 12px; color: #5a5752; line-height: 1.5; margin-bottom: .6rem; }
-  .ind-priority { font-size: 11px; color: var(--muted); margin-bottom: .5rem; }
-  .ind-priority strong { color: #4a4845; font-weight: 500; }
-  .client-chips { display: flex; flex-wrap: wrap; gap: 4px; }
-  .chip {
-    font-size: 10px;
-    padding: 2px 8px;
-    background: var(--white);
-    border: 1px solid var(--mid);
-    border-radius: 6px;
-    color: var(--ink);
-  }
-  .chip-future { color: var(--muted); border-style: dashed; }
-
-  /* ── MECE NOTE ── */
-  .mece-note {
-    margin-top: 2rem;
-    padding: 1.25rem 1.5rem;
-    background: var(--cream);
-    border-radius: 10px;
-    border-left: 3px solid var(--mid);
-    font-size: 12.5px;
-    color: #5a5752;
-    line-height: 1.65;
-  }
-  .mece-note strong { color: var(--ink); font-weight: 500; }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--mid);
-    padding: 2rem 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1100px;
-    margin: 0 auto;
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 860px) {
-    .hero { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.5rem 2.5rem; }
-    .lifecycle { grid-template-columns: 1fr 1fr; margin: 0 1.5rem 2.5rem; }
-    .lc-stage:nth-child(2) { border-right: none; margin-right: 0; }
-    .lc-stage:nth-child(3) { border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.5rem; margin-top: .5rem; }
-    .buckets-grid { grid-template-columns: 1fr; }
-    .detail-grid { grid-template-columns: 1fr; }
-    .overlay-body { grid-template-columns: 1fr 1fr; }
-    .framework-section { padding: 0 1.5rem 4rem; }
-    nav { padding: 0 1.5rem; }
-  }
-</style>
-</head>
-<body>
-
-<nav>
-  <div class="nav-logo">C&T <span>Value Framework</span></div>
-  <ul class="nav-links">
-    <li><a href="#intro">Overview</a></li>
-    <li><a href="#framework">Framework</a></li>
-    <li><a href="#industries">Industries</a></li>
-  </ul>
-</nav>
-
-<!-- ── HERO / INTRO ── -->
-<section id="intro" class="hero">
-  <div>
-    <div class="hero-eyebrow">Code &amp; Theory EXT</div>
-    <h1>The C&T Value Creation <em>Framework</em></h1>
-    <p class="hero-intro">A structured, evidence-based system for measuring, communicating, and proving the business value generated by content automation technology and services — from first conversation to long-term partnership.</p>
-  </div>
-  <div class="hero-right">
-    <p>Content automation programmes deliver real, quantifiable business outcomes — faster time to market, lower production costs, higher conversion rates, and greater content reach. Yet too often this value goes unmeasured, understated, or left out of commercial conversations entirely.</p>
-    <p>This framework changes that. It gives every engagement manager a common language, a structured set of metrics, and a repeatable method for translating programme activity into business impact — one that speaks to the CFO and the CMO in equal measure.</p>
-    <p>Metrics are organised into four discrete value buckets that together provide a complete, non-overlapping view of programme performance. Each metric is tagged by its primary value driver — revenue growth or cost reduction — so the framework can be tailored to the commercial priorities of any client in any industry.</p>
-  </div>
-</section>
-
-<!-- ── LIFECYCLE ── -->
-<div class="lifecycle">
-  <div class="lc-stage">
-    <div class="lc-num">01</div>
-    <div class="lc-title">Value-Based Selling</div>
-    <div class="lc-desc">Before the contract is signed, use the framework to anchor conversations on business outcomes, not deliverables. Shift the commercial model from time-and-materials to value-based pricing by identifying which metrics matter most to this client and what a successful programme looks like in dollar terms.</div>
-  </div>
-  <div class="lc-stage">
-    <div class="lc-num">02</div>
-    <div class="lc-title">Engagement Kickoff</div>
-    <div class="lc-desc">At the start of every engagement, agree a baseline for each selected metric with the client. Document the current state — cycle times, agency spend, asset volume, conversion rates — so future improvements are undeniable and grounded in the client's own data, not estimates.</div>
-  </div>
-  <div class="lc-stage">
-    <div class="lc-num">03</div>
-    <div class="lc-title">Ongoing Delivery</div>
-    <div class="lc-desc">Throughout the programme, track a concise set of P1 metrics weekly and P2/P3 metrics monthly. Use the framework to surface risks early, celebrate wins credibly, and keep executive sponsors engaged with a clear, consistent picture of what the programme is delivering.</div>
-  </div>
-  <div class="lc-stage">
-    <div class="lc-num">04</div>
-    <div class="lc-title">Renewal &amp; Expansion</div>
-    <div class="lc-desc">At every QBR and renewal conversation, the framework produces a ready-made, client-confirmed value story. Confirmed ROI figures, a growing innovation pipeline, and rising platform coverage are the three signals that make renewal and expansion conversations materially stronger.</div>
-  </div>
-</div>
-
-<!-- ── FRAMEWORK ── -->
-<section id="framework" class="framework-section">
-
-  <div class="section-header">
-    <div class="section-title">The Metric Framework</div>
-    <div class="metric-count" id="metric-count">28 metrics across 4 buckets</div>
-  </div>
-
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterInd('all',this)">All industries</button>
-    <button class="filter-btn" onclick="filterInd('media',this)">Media &amp; Entertainment</button>
-    <button class="filter-btn" onclick="filterInd('retail',this)">Retail &amp; eCommerce</button>
-    <button class="filter-btn" onclick="filterInd('fsi',this)">Financial Services</button>
-    <button class="filter-btn" onclick="filterInd('tech',this)">Technology &amp; B2B</button>
-    <button class="filter-btn" onclick="filterInd('cpg',this)">CPG &amp; Consumer</button>
-    <button class="filter-btn" onclick="filterInd('sports',this)">Sports &amp; Live Events</button>
-    <button class="filter-btn" onclick="filterInd('grocery',this)">Grocery &amp; Supermarket</button>
-    <button class="filter-btn" onclick="filterInd('health',this)">Healthcare &amp; Pharma</button>
-    <button class="filter-btn" onclick="filterInd('auto',this)">Automotive</button>
-    <button class="filter-btn" onclick="filterInd('travel',this)">Travel &amp; Hospitality</button>
-  </div>
-
-  <div class="legend">
-    <div class="legend-item"><div class="ld" style="background:#1a5c3a"></div> Revenue growth driver</div>
-    <div class="legend-item"><div class="ld" style="background:#3d2e6b"></div> Cost reduction driver</div>
-    <div class="legend-item"><div class="ld" style="background:#7a4a0d"></div> Both</div>
-    <div style="width:1px;height:14px;background:var(--mid);margin:0 .25rem"></div>
-    <div class="legend-item"><span class="tag tag-p1">P1</span> Core / always-on</div>
-    <div class="legend-item"><span class="tag tag-p2">P2</span> High-value / common</div>
-    <div class="legend-item"><span class="tag tag-p3">P3</span> Situational / advanced</div>
-  </div>
-
-  <div class="buckets-grid">
-
-    <!-- BUCKET 1 -->
-    <div class="bucket-card b1">
-      <div class="bucket-head">
-        <div class="bucket-head-row">
-          <span class="bucket-num">01</span>
-          <span class="bucket-name">Financial Impact</span>
-        </div>
-        <div class="bucket-question">What did content automation deliver in dollar terms?</div>
-        <div class="bucket-kpis">
-          <span class="kpi-tag kpi-b1">Engagement</span>
-          <span class="kpi-tag kpi-b1">Renewal ARR</span>
-        </div>
-      </div>
-      <div class="metric-rows">
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Dollar savings — labor (hours saved × blended rate)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total hours saved multiplied by the fully loaded designer and marketer blended hourly rate. Must include both designer and marketer time to be accurate — excluding either understates the true labour saving.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Workfront task time logs (current FFCP workflow) vs. historical manual baseline. Finance ERP provides the blended rate. Compare time-per-asset before and after automation at workflow level.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — the most universally understood CFO metric. Converts abstract time savings into "hard money" recoverable budget. Required for every engagement as the anchor for value-based commercial conversations.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Agency &amp; production cost avoided ($)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total external spend reduction vs. pre-automation baseline: agency retainers, freelance production fees, stock asset licensing, and localisation vendor costs eliminated or reduced.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Finance and procurement records. Compare external production invoices in the measurement period against the equivalent period prior to automation. Requires a clean baseline established at engagement kickoff.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — primary value driver for FSI clients (JPMC, Wells Fargo) where marketing is not a direct revenue lever. Agency cost is often the single largest discretionary spend line in a content budget and the most visible saving to a CFO.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Cost per asset (fully loaded production spend ÷ approved assets)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total production cost (fully loaded: labour, tooling, vendor, and overhead) divided by the number of approved assets produced in the same period. Tracks unit economics as automation scales.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Finance time-tracking systems + FFCP run logs to allocate cost at scale per workflow run. Divide total spend by approved asset count from DAM or GenStudio output records for the same period.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — demonstrates the compounding value of automation: as volume grows, cost per unit falls. The downward cost curve is the clearest visual representation of programme ROI and works in every industry vertical.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">FTE equivalent reclaimed (hours saved ÷ 1,900 hrs)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total hours saved in the measurement period divided by 1,900 (standard annual working hours). Converts abstract time savings into a headcount equivalent — e.g. "3.2 FTE-E reclaimed."</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Derived from the dollar savings (labor) metric. HR data confirms the blended FTE cost. Calculated as: Total Hours Saved ÷ 1,900. Source: HR data + Workfront.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — resonates strongly in resource reallocation conversations. Shifts the narrative from "we saved money" to "we freed up capacity for higher-value strategic work." Particularly compelling for technology and FSI clients managing headcount growth.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Incremental revenue attributed to content (content ROI / lift)</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">(Incremental revenue attributable to automated content − production cost) ÷ production cost. Measures the net return on content investment, isolating the lift generated by automation-enabled assets over control creative.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">A/B or multivariate testing: AI-generated variants vs. human control assets. Requires persistent content metadata to track an asset through to storefront conversion. Source: Web/app analytics + ad platforms + Adobe Customer Journey Analytics.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — the most commercially compelling metric for revenue-weighted industries (Disney, NFL, Best Buy, Tesco). Requires test infrastructure to implement but produces the most credible renewal narrative when available.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Asset reuse rate (assets reused ÷ total available for reuse)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p3">P3</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of assets actively reused in the measurement period divided by total assets available for reuse in the DAM. A high reuse rate indicates a successful shift to a modular content strategy — e.g. one digital twin serving 100+ AI-generated scenes.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">DAM / Content Hub usage logs + GenStudio asset tracking. Requires consistent asset taxonomy and tagging at ingestion. Compare asset creation events vs. asset retrieval/reuse events for the same content objects.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P3 — a maturity indicator for modular content programmes. Most relevant for CPG (product packshots), Grocery (catalog variations), and Retail (seasonal content). Requires a well-governed DAM before this metric becomes reliable.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Content-influenced pipeline / deal value</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p3">P3</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total value of deals, renewals, or upsells in which automated content played a documented, attributable role in the customer journey — from awareness through to commercial close.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">CRM attribution data (Salesforce or equivalent) linked to content metadata. Requires the client to have multi-touch attribution in place. Best implemented as a quarterly retrospective analysis rather than a live metric.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P3 — highly compelling when available but depends on CRM attribution maturity. Most material for Media (Disney, NFL sponsorship/subscription) and Retail (Best Buy B2B and loyalty). Not feasible for FSI or most B2B clients without CRM investment.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- BUCKET 2 -->
-    <div class="bucket-card b2">
-      <div class="bucket-head">
-        <div class="bucket-head-row">
-          <span class="bucket-num">02</span>
-          <span class="bucket-name">Operational Excellence</span>
-        </div>
-        <div class="bucket-question">How has content operations physically changed?</div>
-        <div class="bucket-kpis">
-          <span class="kpi-tag kpi-b2">Adoption</span>
-          <span class="kpi-tag kpi-b2">Engagement</span>
-        </div>
-      </div>
-      <div class="metric-rows">
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Time to market (brief approval → asset live in channel)</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Elapsed time in days/hours from brief approval to first asset live in its target distribution channel. Requires "last mile" tracking to confirm the asset is truly in-market — not just approved or uploaded.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Workfront timestamp (brief_approved) to activation platform timestamp (asset_live). Both endpoints must be captured to close the measurement loop. Source: Workfront + activation/channel platforms.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — universal across all industries. Faster TTM has both a revenue dimension (earlier campaign capture, reacting to competitor moves in real time) and a cost dimension (fewer rush fees, overtime, and emergency vendor charges). Most intuitive metric for marketers and CMOs.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Content production rate (unique approved assets &amp; variants per period)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total count of unique, approved assets and variants produced in the measurement period. Measures output capacity expansion without corresponding headcount growth — the primary signal that automation is delivering scale.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Workflow run outputs from FFCP / Firefly Services, especially for scaled variant production. Cross-referenced against DAM ingestion records for approved assets. Source: GenStudio / FFCP + DAM + Workfront.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — the clearest operational proof that automation is working. Volume growth without headcount growth is a story every COO and CFO responds to. Directly answers "what did we actually build with this programme?"</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Review cycle time (rounds &amp; elapsed time from ready → approved)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Average elapsed time and number of review rounds from "asset ready for review" to "approved and ready for distribution." Tracks whether speed gains in production are being absorbed by downstream review bottlenecks.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Workfront or Frame.io workflow timestamps. Variance tracking: monitor if AI-generated volume increases review load compared to manually produced assets. Source: Workfront / Frame.io.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — critical governance metric. A programme that doubles production rate but also doubles review rounds delivers no net speed improvement. Particularly important for FSI and Healthcare where legal/brand is a known bottleneck.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="fsi,tech,cpg,health" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Brand consistency score (AI assets passing review without rework)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Percentage of AI-assisted assets that meet brand, legal, and compliance standards on first submission, without requiring rework. A score of 1–10 derived from QA sampling or automated brand intelligence scoring.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Periodic manual audits (QA sampling) or automated scoring via Brand Intelligence tools. Firefly Design Intelligence and Custom Models can be used to enforce guardrails and reduce first-pass failure rates. Source: Brand Intelligence + QA workflows.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — especially material for FSI (JPMC, Wells Fargo) where off-brand or non-compliant assets carry regulatory exposure, and for Healthcare (pharma compliance). High first-pass rate = lower review overhead = faster time to market.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Content variant coverage (markets / SKUs / channels automated)</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of localised, channel-specific, or SKU-level content variants produced through automation that were not previously feasible at this volume through manual production. Measures the expansion of content reach enabled by automation.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">PIM + DAM + campaign data. Compare variant count in the measurement period against baseline variant count prior to automation. Segment by market, channel, and product category. Source: PIM + DAM + campaign analytics.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — primary scale metric for Retail (product pages at SKU level), CPG (retailer co-op content), and Grocery (seasonal catalog). Demonstrates that automation enables content strategies that were simply not feasible before.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Creator productivity (output volume per FTE)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Total approved asset output volume divided by the number of FTEs involved in content production for the same period. Tracks the efficiency of the workforce relative to total output — independent of the dollar value of that output.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Output volume from Workfront / GenStudio divided by FTE headcount data from HR systems for the same period. Efficiency variance: measure output volume against internal labour hours over time to track the productivity curve. Source: Workfront / GenStudio + HR FTE data.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — ROI on GenAI tool adoption at the individual creator level. Demonstrates that the programme isn't just changing what gets built — it's changing how efficiently the team builds it. Useful for conversations about team structure and capacity planning.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- BUCKET 3 -->
-    <div class="bucket-card b3">
-      <div class="bucket-head">
-        <div class="bucket-head-row">
-          <span class="bucket-num">03</span>
-          <span class="bucket-name">Activation &amp; Adoption</span>
-        </div>
-        <div class="bucket-question">Is the programme live and are users getting value?</div>
-        <div class="bucket-kpis">
-          <span class="kpi-tag kpi-b3">Activation</span>
-          <span class="kpi-tag kpi-b3">Adoption</span>
-        </div>
-      </div>
-      <div class="metric-rows">
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Automation rate (% of assets generated via FFCP / Firefly workflows)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Automation Rate = (# assets generated via FFCP or Firefly Services workflows in period P) ÷ (total # assets produced in period P). Tracks what proportion of the content supply chain has been automated.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">FFCP / Firefly Services job and run logs + Workfront. Identify AI-origin assets via API run metadata. Compare against total approved asset count from DAM for the same period. Source: FFCP / Firefly logs + Workfront + DAM.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — the foundational Activation metric. Without a meaningful automation rate, all downstream financial and operational metrics are undermined. Maturity benchmarking: identifies which departments are AI adopters and where resistance or gaps remain.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Use cases live in production (real output, not pilots)</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Count of use cases generating real, business-consumed output in production — explicitly excluding pilots, sandboxes, and proof-of-concept environments. A use case is live when it is generating output that the business is actively using.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Tracked at the account level in Airtable (or equivalent). Confirmed by EM weekly. A use case transitions from pilot to live only when it has generated output consumed by the business for at least one full reporting cycle.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — the primary Activation signal used by EXT leadership to assess whether an account is on track. Directly answers "is the programme delivering?" in the simplest possible terms. Universal across all industries and engagement types.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Use case success metric hit rate (% meeting agreed KPIs)</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Percentage of live use cases that are meeting the success metrics agreed at activation. Expressed as a hit rate: 4 of 5 live use cases hitting targets = 80% hit rate. An account can be well-activated but poorly adopted — this metric surfaces that gap.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Tracked weekly per account. Success metrics are agreed at use case activation and documented in the engagement record. EM reviews each live use case against its target and records hit/miss status. Source: EM weekly update + use case KPI log.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — separates activation from adoption. Having use cases live is necessary but not sufficient; they must also be performing. This metric is the primary early warning signal for engagement risk and the primary evidence of value delivered.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Active users / teams on platform (adoption breadth)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of distinct users or teams actively generating or consuming automated content via platform workflows in the reporting period. Measures adoption breadth — the horizontal spread of the programme across the organisation.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Platform login and usage analytics from GenStudio, FFCP, or AEM. Define "active" as at least one workflow run or content action in the reporting period. Source: Platform usage logs.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — low adoption breadth is the earliest leading indicator of shelfware risk. Complements automation rate (which tracks depth of automation) — a programme can have high automation rate in one team but zero spread across the rest of the organisation.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Workflow automation penetration (% of eligible workflows automated)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Percentage of content workflows that have been automated versus the total number of eligible workflows mapped at engagement kickoff. Tracks penetration of automation across the addressable content supply chain.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Requires a workflow map created at engagement kickoff identifying all automatable content production processes. Track which workflows have been automated in each reporting period. Source: Engagement workflow map + FFCP run logs.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — critical for demonstrating programme value vs. total addressable opportunity. A 30% penetration rate tells a very different story from 80%. Also surfaces the expansion opportunity for renewal conversations: the remaining 70% is the upsell pipeline.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Personalisation depth (data-enabled variants per master creative)</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of data-enabled content variants produced per master creative asset. Tracks the shift from broadcast to hyper-personalised content — moving from 1–2 manually produced variables to 5+ automated, audience-specific variants per master.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Cohort analysis: compare number of audience segments reached per campaign before and after automation. Source: AEP (Adobe Experience Platform) + AEM Assets. Track variant count per campaign relative to master asset count.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — most material for consumer-facing industries where personalisation directly drives engagement and revenue: Disney, NFL (fan segments), Best Buy (product affinity), Tesco (loyalty segments). Note: distinct from personalisation scale in Bucket 4, which measures audience reach, not production depth.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery,auto" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Localisation &amp; variant coverage (% of content localised across markets)</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Share of available reusable content that has been localised across all required markets, measured as a percentage of total market/locale coverage. Tracks completeness of content availability, not just volume of variants produced.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Market gap analysis: compare localised asset availability against regional market requirements defined at engagement kickoff. Source: PIM + DAM + campaign analytics. Segment by market and content type.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — distinct from content variant coverage (B2, which counts volume) — this measures market completeness. Highest priority for Tesco (UK regional variations), 3M (global industrial markets), and any client operating across 10+ markets.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">CSC maturity index (organisational AI &amp; content supply chain score)</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p3">P3</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">A qualitative index scored 1–5 tracking the client organisation's overall maturity in AI adoption and content supply chain management. Covers process, technology, governance, people, and culture dimensions.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Periodic self-assessment against a standardised CSC maturity model via surveys and workshops facilitated by the EM. Benchmarking: compare the client's score against industry averages and against their own score at engagement kickoff. Source: CSC maturity surveys / workshops.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P3 — a strategic leading indicator rather than an operational metric. Vital for tracking the cultural and organisational shift required for GenAI success at scale. Most useful for long-term engagements where change management is a significant programme component.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- BUCKET 4 -->
-    <div class="bucket-card b4">
-      <div class="bucket-head">
-        <div class="bucket-head-row">
-          <span class="bucket-num">04</span>
-          <span class="bucket-name">Strategic &amp; Platform Value</span>
-        </div>
-        <div class="bucket-question">Is Adobe becoming central to how the client operates?</div>
-        <div class="bucket-kpis">
-          <span class="kpi-tag kpi-b4">Renewal ARR</span>
-          <span class="kpi-tag kpi-b4">Activation</span>
-        </div>
-      </div>
-      <div class="metric-rows">
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Innovation pipeline (validated future use cases committed by sponsor)</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of future use cases that the client's business sponsor has explicitly committed to building in the next programme phase. A use case enters the innovation pipeline only when it has been validated (scoped, prioritised, and sponsor-approved) — not merely discussed.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Tracked at the account level in the engagement record. Updated quarterly (or following each strategic review). EM confirms pipeline entries with the client's business sponsor in writing. Source: EM account record + sponsor sign-off.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — the strongest leading indicator of expansion ARR. A growing pipeline signals that the client sees Adobe as a long-term platform partner, not a point solution provider. Critical for every renewal conversation regardless of industry.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Customer-confirmed value (sponsor sign-off on reported figures)</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p1">P1</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Binary confirmation (yes/no) from the client's finance or marketing ops contact that the reported ROI figures are accurate and validated. Moves the value story from "we believe" to "the client agrees in writing." Without this, renewal conversations rest on unconfirmed estimates.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Formal sign-off obtained at each QBR. EM presents the cumulative value figure and requests written confirmation from a named client contact. Recorded in the engagement record with date and confirming contact name. Source: QBR record + client confirmation email or document.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P1 — the most important single metric for protecting renewal ARR. Confirmed value is categorically more persuasive than unconfirmed value in any commercial negotiation. Required at every QBR as a non-negotiable programme governance step.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Adobe surface coverage (distinct products actively in use)</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of distinct Adobe products actively in use by the client in the measurement period. Tracks platform centralisation — the degree to which Adobe has moved from a point solution to a core operating platform for the client's content function.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Tracked quarterly at the account level (surface coverage changes slowly). EM confirms active product usage with the client's technology or marketing ops lead. Source: EM account record + Adobe licence/usage data where available.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — high surface coverage creates switching cost and signals deep platform integration. Each additional product in active use increases renewal likelihood and expansion potential. Tracked quarterly rather than weekly given its slow rate of change.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Cross-channel content reach (channels powered by automation)</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of distinct distribution channels (web, paid social, email, in-store, app, OTT, print) where automated content is actively published and consumed. Measures how broadly Adobe powers the client's content go-to-market motion.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Channel activation records cross-referenced against automated content workflow outputs. A channel counts as active when it has received automation-produced content in the reporting period. Source: Campaign analytics + DAM distribution records.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — breadth of channel coverage signals strategic centrality. A client using automated content across 8 channels is far more dependent on the programme than one using it in 2. High channel coverage is a strong renewal and expansion signal for consumer-facing clients.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,cpg,sports,grocery,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Content personalisation scale (distinct audience segments served)</span>
-            <div class="metric-tag-group"><span class="tag tag-growth">Revenue</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Number of distinct audience segments actively receiving personalised, automation-produced content in the measurement period. Measures the strategic reach of personalisation — how broadly the client is deploying the 1:1 content capability that automation enables. Distinct from personalisation depth (B3), which measures variants per master creative.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">AEP segment data cross-referenced with campaign personalisation records. Source: Adobe Experience Platform (AEP) + campaign analytics.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — personalisation at scale is the competitive differentiation Adobe enables that most clients could not achieve manually. Most material for Disney (fan segments), NFL (fan affinity), Best Buy (product affinity), and Tesco (loyalty tiers).</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="fsi,tech,health,cpg" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Regulatory &amp; brand risk incident reduction</span>
-            <div class="metric-tag-group"><span class="tag tag-cost">Cost</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Reduction in the number of compliance incidents, legal holds, brand safety violations, or regulatory findings attributable to content, compared against the pre-automation baseline. Tracks risk reduction as a measurable business value.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">Legal and compliance records from the client's risk management function. Compare incident count in the measurement period against the equivalent period prior to automation. Requires a clean baseline and consistent incident classification. Source: Client legal/compliance records.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — highest strategic value for FSI (JPMC, Wells Fargo regulatory exposure) and Healthcare (pharma promotional compliance). Difficult to quantify as a dollar figure but extremely compelling in board-level conversations about the true cost of non-compliance.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-        <div class="metric-row" data-i="media,retail,fsi,tech,cpg,sports,grocery,health,auto,travel" onclick="toggleMetric(this)">
-          <div class="metric-top">
-            <span class="metric-name">Executive sponsor engagement &amp; advocacy</span>
-            <div class="metric-tag-group"><span class="tag tag-both">Both</span><span class="tag tag-p2">P2</span><span class="expand-arrow">▼</span></div>
-          </div>
-        </div>
-        <div class="metric-detail">
-          <div class="detail-grid">
-            <div class="detail-block"><div class="detail-label">Definition</div><div class="detail-text">Presence and active engagement of a C-level or VP-level sponsor in programme reviews, QBRs, and strategic planning sessions. Serves as a proxy for the strategic importance of the programme to the account. Tracked as a qualitative signal, not a numeric metric.</div></div>
-            <div class="detail-block"><div class="detail-label">How it's measured</div><div class="detail-text">EM tracks sponsor attendance at each programme governance touchpoint. Qualitative notes on sponsor sentiment and advocacy captured in the account record. Low executive engagement triggers an account risk flag. Source: EM account notes + meeting records.</div></div>
-            <div class="detail-block"><div class="detail-label">Priority justification</div><div class="detail-text">P2 — the leading risk indicator for renewal. Programmes that lose executive sponsorship rarely survive the renewal cycle regardless of their operational metrics. Monitoring and maintaining senior engagement is one of the highest-ROI activities an EM can invest in.</div><div class="priority-bar"><div class="pbar-dot filled"></div><div class="pbar-dot filled"></div><div class="pbar-dot"></div></div></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div><!-- /buckets-grid -->
-
-  <!-- INDUSTRY OVERLAY -->
-  <div id="industries" class="industry-overlay" style="margin-top:3rem">
-    <div class="overlay-toggle" onclick="toggleOverlay(this)">
-      <div>
-        <div class="overlay-toggle-title">Industry focus guide — named client examples</div>
-        <div class="overlay-toggle-sub">Revenue vs. cost orientation by vertical, with recommended priority metrics</div>
-      </div>
-      <span class="overlay-toggle-arrow">▼</span>
-    </div>
-    <div class="overlay-body" id="industryBody">
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#1a5c3a"></span>Media &amp; Entertainment</div>
-        <div class="ind-focus">Revenue-weighted. Content is a product, not a support function — marketing spend directly drives subscription, advertising, and licensing revenue.</div>
-        <div class="ind-priority">Prioritise: <strong>Content ROI/lift, personalisation scale, cross-channel reach, innovation pipeline, variant coverage</strong></div>
-        <div class="client-chips"><span class="chip">Disney</span><span class="chip">NFL</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#185fa5"></span>Retail &amp; eCommerce</div>
-        <div class="ind-focus">Balanced. High asset volume demands drive cost savings; TTM and conversion lift directly drive revenue. Seasonal peaks make production agility a competitive advantage.</div>
-        <div class="ind-priority">Prioritise: <strong>TTM, production rate, conversion lift, cost per asset, personalisation depth</strong></div>
-        <div class="client-chips"><span class="chip">Best Buy</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#3d2e6b"></span>Financial Services</div>
-        <div class="ind-focus">Cost-weighted. Marketing is brand and compliance-driven, not a direct revenue lever. Risk reduction and agency cost elimination are the primary value propositions.</div>
-        <div class="ind-priority">Prioritise: <strong>Agency cost avoided, FTE-E, brand consistency, dollar savings, compliance incidents</strong></div>
-        <div class="client-chips"><span class="chip">JPMC</span><span class="chip">Wells Fargo</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#3b6d11"></span>Technology &amp; B2B</div>
-        <div class="ind-focus">Cost-weighted with strategic depth. Long sales cycles mean content supports pipeline indirectly. Headcount efficiency and platform maturity are the primary executive concerns.</div>
-        <div class="ind-priority">Prioritise: <strong>FTE-E, automation rate, creator productivity, CSC maturity index, surface coverage</strong></div>
-        <div class="client-chips"><span class="chip">IBM</span><span class="chip">3M</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#d4537e"></span>Sports &amp; Live Events</div>
-        <div class="ind-focus">Revenue-weighted. Real-time content demands are extreme; fan engagement directly drives broadcast value, sponsorship rates, and ticket/merchandise revenue.</div>
-        <div class="ind-priority">Prioritise: <strong>TTM, personalisation scale, cross-channel reach, content ROI, innovation pipeline</strong></div>
-        <div class="client-chips"><span class="chip">NFL</span><span class="chip">Disney (ESPN)</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#ba7517"></span>Grocery &amp; Supermarket</div>
-        <div class="ind-focus">Balanced. Enormous SKU volumes and frequent promotional cycles create both a cost imperative (scale without headcount) and a revenue opportunity (faster promotional activation).</div>
-        <div class="ind-priority">Prioritise: <strong>Production rate, localisation coverage, cost per asset, TTM, personalisation depth</strong></div>
-        <div class="client-chips"><span class="chip">Tesco</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#639922"></span>CPG &amp; Consumer Goods</div>
-        <div class="ind-focus">Balanced. Global brand with high localisation demands — retailer co-op content, market-specific packaging, and seasonal campaigns create both scale cost pressure and revenue growth opportunity.</div>
-        <div class="ind-priority">Prioritise: <strong>Localisation coverage, variant coverage, asset reuse rate, TTM, cost per asset</strong></div>
-        <div class="client-chips"><span class="chip">3M</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#85b7eb"></span>Healthcare &amp; Pharma</div>
-        <div class="ind-focus">Cost and compliance-weighted. Regulatory requirements make content production expensive and slow. Risk reduction, compliance consistency, and review cycle compression are the primary value drivers.</div>
-        <div class="ind-priority">Prioritise: <strong>Brand consistency, review cycle time, FTE-E, dollar savings, compliance incidents</strong></div>
-        <div class="client-chips"><span class="chip chip-future">Future pipeline</span></div>
-      </div>
-      <div class="ind-card">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#ef9f27"></span>Automotive</div>
-        <div class="ind-focus">Balanced. Complex, high-value asset production (configurators, model variants, global localisation) concentrates significant agency spend. Brand consistency across markets is a strategic priority.</div>
-        <div class="ind-priority">Prioritise: <strong>Agency cost avoided, variant coverage, TTM, localisation coverage, surface coverage</strong></div>
-        <div class="client-chips"><span class="chip chip-future">Future pipeline</span></div>
-      </div>
-      <div class="ind-card" style="border-bottom:none">
-        <div class="ind-card-title"><span class="ind-pip" style="background:#ed93b1"></span>Travel &amp; Hospitality</div>
-        <div class="ind-focus">Revenue-weighted. Personalised content at scale drives booking conversion and loyalty programme engagement. Seasonal demand spikes require rapid TTM and high variant coverage.</div>
-        <div class="ind-priority">Prioritise: <strong>Personalisation depth, conversion lift, TTM, cross-channel reach, content ROI</strong></div>
-        <div class="client-chips"><span class="chip chip-future">Future pipeline</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mece-note">
-    <strong>MECE design principle.</strong> Each metric measures exactly one distinct dimension of value and maps to exactly one bucket. Bucket 1 captures <em>dollar outcomes</em>. Bucket 2 captures <em>operational throughput and process efficiency</em>. Bucket 3 captures <em>programme activation and user adoption depth</em>. Bucket 4 captures <em>strategic positioning and platform entrenchment</em>. No metric appears in more than one bucket. Where two metrics could appear adjacent — e.g. personalisation depth (B3: variants per master creative, a production metric) vs. personalisation scale (B4: audience segments reached, a market coverage metric) — they are retained as distinct because they measure genuinely different things. Click any metric row to expand its full definition, measurement method, and priority justification.
-  </div>
-
-</section>
-
-<footer>
-  <span>C&T Value Creation Framework — Code &amp; Theory EXT</span>
-  <span>Built on Adobe Firefly Services &amp; GenStudio</span>
-</footer>
-
-<script>
-  function toggleMetric(row) {
-    const isOpen = row.classList.contains('open');
-    // close all
-    document.querySelectorAll('.metric-row.open').forEach(r => r.classList.remove('open'));
-    if (!isOpen) row.classList.add('open');
-  }
-
-  function filterInd(ind, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const rows = document.querySelectorAll('.metric-row');
-    let visible = 0;
-    rows.forEach(row => {
-      const inds = row.dataset.i || '';
-      if (ind === 'all') {
-        row.classList.remove('dimmed', 'highlighted');
-        visible++;
-      } else if (inds.includes(ind)) {
-        row.classList.add('highlighted');
-        row.classList.remove('dimmed');
-        visible++;
-      } else {
-        row.classList.add('dimmed');
-        row.classList.remove('highlighted');
-        row.classList.remove('open');
-      }
-    });
-    document.getElementById('metric-count').textContent =
-      ind === 'all' ? '28 metrics across 4 buckets' : visible + ' metrics for this industry';
-  }
-
-  function toggleOverlay(toggle) {
-    const body = document.getElementById('industryBody');
-    const isOpen = body.classList.contains('open');
-    body.classList.toggle('open');
-    toggle.classList.toggle('open');
-  }
-</script>
-</body>
-</html>
+EXT Value Creation Framework
+	•	Overview
+	•	Framework
+	•	Industries
+CODE & THEORY EXT
+The EXT Value Creation Framework
+A structured, evidence-based system for measuring, communicating, and proving the business value generated by content supply chain transformation — from the first commercial conversation through the full lifespan of the engagement.
+Enterprise content supply chain programmes — powered by Adobe Firefly Services, GenStudio, and Creative Cloud — deliver real, quantifiable business outcomes. Faster time to market, lower production costs, higher conversion rates, greater content reach. Yet too often this value goes unmeasured, understated, or absent from commercial conversations entirely.
+EXT exists to change that. This framework gives every Engagement Manager a common language, a structured set of metrics, and a repeatable method for translating programme activity into business impact — one that speaks to the CFO and the CMO in equal measure. It operationalizes the promise of content supply chain transformation into the kind of confirmed, client-validated evidence that protects and grows accounts.
+Metrics are organised into four discrete value buckets — drawn from the EXT Value Framework — that together provide a complete, non-overlapping view of programme performance. Each metric is tagged by its primary value driver, revenue growth or cost reduction, so the framework can be calibrated to the commercial priorities of any client, in any industry, at any stage of the engagement.
+01
+Value-Based Selling
+Before the contract is signed, use the framework to anchor conversations on measurable business outcomes — not deliverables or hours. Shift the commercial model from time-and-materials to value-based pricing by identifying which metrics matter most to this client and establishing what a successful content supply chain programme looks like in dollar terms.
+02
+Rationalize — Engagement Kickoff
+At the start of every engagement, agree a baseline for each selected metric with the client. Document the current state — cycle times, agency spend, asset volume, conversion rates — so future improvements are undeniable and grounded in the client's own data. This is the foundation of the RMO Rationalize phase: strategic clarity before deployment.
+03
+Modernize & Optimize — Active Delivery
+Throughout the programme, track P1 metrics weekly and P2/P3 metrics monthly. Use the framework to surface adoption risks early, validate that content supply chain workflows are delivering at scale, and keep executive sponsors engaged with a clear, consistent picture of value realised — embedded within the Modernize and Optimize phases of the RMO methodology.
+04
+Renewal & Expansion
+At every QBR and renewal conversation, the framework produces a ready-made, client-confirmed value story. Confirmed ROI figures, a growing innovation pipeline, and rising platform surface coverage are the three signals that make renewal and expansion conversations materially stronger — and move the relationship from execution partner to strategic platform.
+The EXT Value Metric Framework
+28 metrics across 4 buckets
+All industries
+Media & Entertainment
+Retail & eCommerce
+Financial Services
+Technology & B2B
+CPG & Consumer
+Sports & Live Events
+Grocery & Supermarket
+Healthcare & Pharma
+Automotive
+Travel & Hospitality
+
+Revenue growth driver
+
+Cost reduction driver
+
+Both
+
+P1
+Core / always-on
+P2
+High-value / common
+P3
+Situational / advanced
+01
+Financial Impact
+What has content supply chain transformation delivered in dollar terms?
+Engagement
+Renewal ARR
+Dollar savings — labor (hours saved × blended rate)
+Cost
+P1
+▼
+Agency & production cost avoided ($)
+Cost
+P1
+▼
+Cost per asset (fully loaded production spend ÷ approved assets)
+Cost
+P1
+▼
+FTE equivalent reclaimed (hours saved ÷ 1,900 hrs)
+Cost
+P2
+▼
+Incremental revenue attributed to content (content ROI / lift)
+Revenue
+P2
+▼
+Asset reuse rate (assets reused ÷ total available for reuse)
+Cost
+P3
+▼
+Content-influenced pipeline / deal value
+Revenue
+P3
+▼
+02
+Operational Excellence
+How has the content supply chain physically changed?
+Adoption
+Engagement
+Time to market (brief approval → asset live in channel)
+Both
+P1
+▼
+Content production rate (unique approved assets & variants per period)
+Cost
+P1
+▼
+Review cycle time (rounds & elapsed time from ready → approved)
+Cost
+P2
+▼
+Brand consistency score (AI assets passing review without rework)
+Cost
+P2
+▼
+Content variant coverage (markets / SKUs / channels automated)
+Revenue
+P2
+▼
+Creator productivity (output volume per FTE)
+Cost
+P2
+▼
+03
+Activation & Adoption
+Is the programme live and are teams realising value at scale?
+Activation
+Adoption
+Automation rate (% of assets generated via FFCP / Firefly workflows)
+Cost
+P1
+▼
+Use cases live in production (real output, not pilots)
+Both
+P1
+▼
+Use case success metric hit rate (% meeting agreed KPIs)
+Both
+P1
+▼
+Active users / teams on platform (adoption breadth)
+Cost
+P2
+▼
+Workflow automation penetration (% of eligible workflows automated)
+Cost
+P2
+▼
+Personalisation depth (data-enabled variants per master creative)
+Revenue
+P2
+▼
+Localisation & variant coverage (% of content localised across markets)
+Both
+P2
+▼
+CSC maturity index (organisational AI & content supply chain score)
+Cost
+P3
+▼
+04
+Strategic & Platform Value
+Is Adobe becoming central to how the client operates and grows?
+Renewal ARR
+Activation
+Innovation pipeline (validated future use cases committed by sponsor)
+Revenue
+P1
+▼
+Customer-confirmed value (sponsor sign-off on reported figures)
+Both
+P1
+▼
+Adobe surface coverage (distinct products actively in use)
+Both
+P2
+▼
+Cross-channel content reach (channels powered by automation)
+Revenue
+P2
+▼
+Content personalisation scale (distinct audience segments served)
+Revenue
+P2
+▼
+Regulatory & brand risk incident reduction
+Cost
+P2
+▼
+Executive sponsor engagement & advocacy
+Both
+P2
+▼
+Industry focus guide — named client examples
+Revenue vs. cost orientation by vertical, with recommended priority metrics
+▼
+MECE design principle. Each metric measures exactly one distinct dimension of value and maps to exactly one bucket. Bucket 1 captures dollar outcomes from content supply chain investment. Bucket 2 captures operational throughput and process efficiency within the content supply chain. Bucket 3 captures programme activation and adoption depth across teams and workflows. Bucket 4 captures strategic positioning and platform entrenchment — the degree to which Adobe is becoming central to how the client operates. No metric appears in more than one bucket. Where two metrics could appear adjacent — e.g. personalisation depth (B3: variants per master creative, a production metric) vs. personalisation scale (B4: audience segments reached, a market coverage metric) — they are retained as distinct because they measure genuinely different things. Click any metric row to expand its full definition, measurement method, and priority justification.
+EXT Value Creation Framework — Code & Theory Enterprise Experience Transformation
+Adobe Firefly Services · GenStudio · Creative Cloud
